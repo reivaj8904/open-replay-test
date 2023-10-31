@@ -10,7 +10,7 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/test-page",
+        "outputPath": "dist/apps/test-page/browser",
         "index": "apps/test-page/src/index.html",
         "main": "apps/test-page/src/main.ts",
         "polyfills": ["zone.js"],
@@ -96,6 +96,59 @@
       "options": {
         "buildTarget": "test-page:build"
       }
+    },
+    "server": {
+      "dependsOn": ["build"],
+      "executor": "@angular-devkit/build-angular:server",
+      "options": {
+        "outputPath": "dist/apps/test-page/server",
+        "main": "apps/test-page/server.ts",
+        "tsConfig": "apps/test-page/tsconfig.server.json"
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "media"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "sourceMap": true,
+          "extractLicenses": false,
+          "vendorChunk": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve-ssr": {
+      "executor": "@nguniversal/builders:ssr-dev-server",
+      "configurations": {
+        "development": {
+          "browserTarget": "test-page:build:development",
+          "serverTarget": "test-page:server:development"
+        },
+        "production": {
+          "browserTarget": "test-page:build:production",
+          "serverTarget": "test-page:server:production"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "prerender": {
+      "executor": "@nguniversal/builders:prerender",
+      "options": {
+        "routes": ["/"]
+      },
+      "configurations": {
+        "development": {
+          "browserTarget": "test-page:build:development",
+          "serverTarget": "test-page:server:development"
+        },
+        "production": {
+          "browserTarget": "test-page:build:production",
+          "serverTarget": "test-page:server:production"
+        }
+      },
+      "defaultConfiguration": "production"
     }
   }
 }
